@@ -4,7 +4,8 @@ On the telegram side:
 
 1) Create a bot and save its token. [BotFather](https://t.me/BotFather)
 
-2) Add this bot to telegram chats that will be integrated with slack. 
+2) Add this bot to telegram chats that will be integrated with slack.
+   
 You must have full administrator rights in the corresponding chats, and also delegate administrator rights to the bot.
 
 On the slack side:
@@ -26,12 +27,14 @@ On the slack side:
 3) Go to `OAuth Tokens` and install it to your workspace, allowing permissions.
    
 Now you have the Bot User OAuth Token (starts with xoxb).
+
 The party connecting from Slack to Telegram transfers the `Channel ID` of the channel that needs to be wired to the Telegram chat and this `Bot User OAuth Token` to the owners of the server of this application.
 
 
 5) Go to `Event Subscriptions` and switch On `Enable Events`.
    
 Here you will need to specify the URL that the integration server will return after launch.
+
 The party setting up the integration and owning this application server provides this link to partners for connection.
 
 ## Install
