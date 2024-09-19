@@ -11,7 +11,7 @@ On the slack side:
 
 1) Create [App](https://api.slack.com/apps)
 
-2) Go to OAuth & Permissions, scroll to Scopes > Bot Token Scopes, and set the following scopes::
+2) Go to OAuth & Permissions, scroll to Scopes > Bot Token Scopes, and set the following scopes:
 - channels:history
 - channels:read
 - chat:write
