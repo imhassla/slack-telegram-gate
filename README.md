@@ -31,7 +31,7 @@ Now you have the Bot User OAuth Token (starts with xoxb).
 The party connecting from Slack to Telegram transfers the `Channel ID` of the channel that needs to be wired to the Telegram chat and this `Bot User OAuth Token` to the owners of the server of this application.
 
 
-5) Go to `Event Subscriptions` and switch On `Enable Events`.
+4) Go to `Event Subscriptions` and switch On `Enable Events`.
    
 Here you will need to specify the URL that the integration server will return after launch.
 
