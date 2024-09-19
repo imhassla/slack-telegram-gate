@@ -24,7 +24,7 @@ conn = sqlite3.connect('messages.db', check_same_thread=False)
 cursor = conn.cursor()
 
 # Setting up a Telegram bot
-telegram_bot = telebot.TeleBot(current_config['bot_settings']['telegram_bot_gate_token'])
+telegram_bot = telebot.TeleBot(current_config['settings']['telegram_bot_gate_token'])
 logging.debug("Telegram bot configured")
 
 def send_text_to_slack(message, slack_client, project, sender_name, telegram_username):
@@ -61,7 +61,7 @@ def send_media_to_slack(message, slack_client, project, sender_name, telegram_us
         return
 
     file_info = telegram_bot.get_file(file_id)
-    file_url = f'https://api.telegram.org/file/bot{current_config["bot_settings"]["telegram_bot_gate_token"]}/{file_info.file_path}'
+    file_url = f'https://api.telegram.org/file/bot{current_config["settings"]["telegram_bot_gate_token"]}/{file_info.file_path}'
     filename = file_info.file_path.split('/')[-1]
 
     file_response = requests.get(file_url)
@@ -243,7 +243,7 @@ if __name__ == '__main__':
     logging.info(f"The server is running on {server_ip}. Use the URL for Slack Event Subscriptions: \nhttp://{server_ip}:5000/slack/events")
 
     # Run Gunicorn in a separate process
-    gunicorn_command = ["gunicorn", "-w", "4", "-b", "127.0.0.1:5000", "main:app"]
+    gunicorn_command = ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "main:app"]
     gunicorn_process = subprocess.Popen(gunicorn_command)
 
     # Run configuration monitoring in a separate thread

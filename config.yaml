@@ -1,0 +1,16 @@
+settings:
+  telegram_bot_gate_token: "bot:token"  
+
+channels:
+    - project_name: "example_project_1"
+      telegram_chat_id: "-123456785"
+      slack_channel_id: "CF84D5848"    
+      slack_bot_token: "xoxb-888-888-C846D54D"
+      active: true
+
+    - project_name: "example_project_2"
+      telegram_chat_id: "-123458525"
+      slack_channel_id: "CF8465848"    
+      slack_bot_token: "xoxb-888-888-C846D54D"
+      active: true
+

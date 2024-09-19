@@ -64,7 +64,7 @@ def process_reply_message(message, project):
 # Search for a project by Slack channel
 def find_project_by_slack_channel(channel_id):
     logging.debug(f"Search for a project for Slack channel_id={channel_id}")
-    for project in current_config['project_channels']:
+    for project in current_config['channels']:
         if project['slack_channel_id'] == channel_id:
             logging.debug(f"Project found: {project['project_name']}")
             return project
@@ -74,7 +74,7 @@ def find_project_by_slack_channel(channel_id):
 # Search for a project by Telegram chat_id
 def find_project_by_chat_id(chat_id):
     logging.debug(f"Search for a project for chat_id={chat_id}")
-    for project in current_config['project_channels']:
+    for project in current_config['channels']:
         if project['telegram_chat_id'] == str(chat_id):
             logging.debug(f"Project found: {project['project_name']}")
             return project
@@ -134,7 +134,7 @@ def load_config():
             config_last_loaded_time = time.time()
             logging.debug("Configuration file updated.")
             # Get and save slack_bot_member_id for each project
-            for project in current_config['project_channels']:
+            for project in current_config['channels']:
                 slack_token = project['slack_bot_token']
                 project['slack_bot_member_id'] = get_slack_bot_member_id(slack_token)
             
