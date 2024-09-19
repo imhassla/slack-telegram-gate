@@ -12,5 +12,5 @@ channels:
       telegram_chat_id: "-123458525"
       slack_channel_id: "CF8465848"    
       slack_bot_token: "xoxb-888-888-C846D54D"
-      active: true
+      active: false
 

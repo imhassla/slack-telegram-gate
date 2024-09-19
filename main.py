@@ -239,8 +239,8 @@ if __name__ == '__main__':
     # Event to stop threads
     stop_event = threading.Event()
     server_ip = get_server_ip()
-    print(f'http://{server_ip}:5000/slack/events')
-    logging.info(f"The server is running on {server_ip}. Use the URL for Slack Event Subscriptions: \nhttp://{server_ip}:5000/slack/events")
+    print(f'http://{server_ip}:5555/slack/events')
+    logging.info(f"The server is running on {server_ip}. Use the URL for Slack Event Subscriptions: \nhttp://{server_ip}:5555/slack/events")
 
     # Run Gunicorn in a separate process
     gunicorn_command = ["gunicorn", "-w", "4", "-b", "0.0.0.0:5555", "main:app"]
