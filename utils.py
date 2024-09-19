@@ -225,7 +225,7 @@ def update_slack_thread_ts_by_string(event, project):
                 logging.debug(f"Found telegram_message_id: {telegram_message_id}")
                 save_thread_ts(telegram_message_id, event_ts, project_name)
             else:
-                logging.warning(f"Entry with slack_thread_ts={timestamp} for project {project_name} was not found in the database.")
+                logging.debug(f"Entry with slack_thread_ts={timestamp} for project {project_name} was not found in the database.")
                        
     except Exception as e:
         logging.error(f"Error updating message with slack_thread_ts={event.get('slack_thread_ts')}: {str(e)}")
