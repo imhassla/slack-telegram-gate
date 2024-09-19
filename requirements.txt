@@ -1,0 +1,6 @@
+telebot
+slack-sdk
+requests
+PyYAML
+flask
+gunicorn
