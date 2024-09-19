@@ -6,7 +6,7 @@ On the telegram side:
 
 2) Add this bot to telegram chats that will be integrated with slack.
    
-You must have full administrator rights in the corresponding chats, and also delegate administrator rights to the bot.
+3) You must have full administrator rights in the corresponding chats, and also delegate administrator rights to the bot.
 
 On the slack side:
 
