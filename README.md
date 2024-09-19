@@ -11,7 +11,7 @@ On the slack side:
 
 1) Create [App](https://api.slack.com/apps)
 
-2) Go to OAuth & Permissions, scroll to Scopes > Bot Token Scopes, and set the following scopes:
+2) Go to `OAuth & Permissions`, scroll to `Scopes` > `Bot Token Scopes`, and set the following scopes:
 - channels:history
 - channels:read
 - chat:write
@@ -23,7 +23,7 @@ On the slack side:
 - remote_files:read
 - users:read
 
-3) Go to OAuth Tokens and install it to your workspace, allowing permissions.
+3) Go to `OAuth Tokens` and install it to your workspace, allowing permissions.
 Now you have the Bot User OAuth Token (starts with xoxb).
 The party connecting from Slack to Telegram transfers the `Channel ID` of the channel that needs to be wired to the Telegram chat and this `Bot User OAuth Token` to the owners of the server of this application.
 
