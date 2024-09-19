@@ -243,7 +243,7 @@ if __name__ == '__main__':
     logging.info(f"The server is running on {server_ip}. Use the URL for Slack Event Subscriptions: \nhttp://{server_ip}:5000/slack/events")
 
     # Run Gunicorn in a separate process
-    gunicorn_command = ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "main:app"]
+    gunicorn_command = ["gunicorn", "-w", "4", "-b", "0.0.0.0:5555", "main:app"]
     gunicorn_process = subprocess.Popen(gunicorn_command)
 
     # Run configuration monitoring in a separate thread
