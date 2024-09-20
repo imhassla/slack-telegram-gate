@@ -19,21 +19,25 @@ display_information:
 features:
   bot_user:
     display_name: Telegram gate
-    always_online: false
+    always_online: true
 oauth_config:
   scopes:
     bot:
       - channels:history
       - channels:read
       - chat:write
-      - files:read
       - files:write
       - groups:history
       - groups:read
       - incoming-webhook
       - remote_files:read
       - users:read
+      - files:read
 settings:
+  event_subscriptions:
+    bot_events:
+      - message.channels
+      - message.groups
   org_deploy_enabled: false
   socket_mode_enabled: false
   token_rotation_enabled: false
