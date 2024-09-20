@@ -35,12 +35,14 @@ oauth_config:
       - files:read
 settings:
   event_subscriptions:
+    request_url: http://server:port/slack/events
     bot_events:
       - message.channels
       - message.groups
   org_deploy_enabled: false
   socket_mode_enabled: false
   token_rotation_enabled: false
+
 ```
 
 3) Go to `OAuth Tokens` and install it to your workspace, allowing permissions.
