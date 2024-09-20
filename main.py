@@ -22,6 +22,7 @@ logging.basicConfig(
 current_config = load_config()
 conn = sqlite3.connect('messages.db', check_same_thread=False)
 cursor = conn.cursor()
+stop_event = threading.Event()
 
 # Setting up a Telegram bot
 telegram_bot = telebot.TeleBot(current_config['settings']['telegram_bot_gate_token'])
@@ -237,7 +238,6 @@ def slack_event_handler():
 
 if __name__ == '__main__':
     # Event to stop threads
-    stop_event = threading.Event()
     server_ip = get_server_ip()
     print(f'http://{server_ip}:5555/slack/events')
     logging.info(f"The server is running on {server_ip}. Use the URL for Slack Event Subscriptions: \nhttp://{server_ip}:5555/slack/events")
