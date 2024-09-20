@@ -56,7 +56,7 @@ settings:
    
 - Here you will need to specify the URL that the integration server will return after launch.
 
-- The party setting up the integration and owning this application server provides this link to partners for connection.
+- The party setting up the integration and owning this application server provides this link to partners for connection. Make sure the status is verified.
 
 ## Install
 With venv environment (python3-full and python3-pip required):
