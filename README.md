@@ -12,17 +12,32 @@ On the slack side:
 
 1) Create [App](https://api.slack.com/apps)
 
-2) Go to `OAuth & Permissions`, scroll to `Scopes` > `Bot Token Scopes`, and set the following scopes:
-- channels:history
-- channels:read
-- chat:write
-- files:read
-- files:write
-- groups:history
-- groups:read
-- incoming-webhook
-- remote_files:read
-- users:read
+2) Select `Create app from manifest`, select workspace and set the following yaml:
+```
+display_information:
+  name: Telegram gate
+features:
+  bot_user:
+    display_name: Telegram gate
+    always_online: false
+oauth_config:
+  scopes:
+    bot:
+      - channels:history
+      - channels:read
+      - chat:write
+      - files:read
+      - files:write
+      - groups:history
+      - groups:read
+      - incoming-webhook
+      - remote_files:read
+      - users:read
+settings:
+  org_deploy_enabled: false
+  socket_mode_enabled: false
+  token_rotation_enabled: false
+```
 
 3) Go to `OAuth Tokens` and install it to your workspace, allowing permissions.
    
