@@ -1,5 +1,6 @@
 from utils import download_file_from_slack, process_reply_message, find_project_by_chat_id, get_slack_username, find_project_by_slack_channel
 from utils import get_server_ip, start_config_monitor, process_reply_to_message, update_slack_thread_ts_by_string, save_thread_ts, load_config
+from utils import get_telegram_message_id_by_thread_ts, get_thread_ts_from_slack
 from flask import Flask, request, jsonify
 from slack_sdk import WebClient
 import subprocess
@@ -15,7 +16,7 @@ import os
 # Setting up logging
 logging.basicConfig(
     filename='integration.log', 
-    level=logging.INFO,
+    level=logging.DEBUG,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
@@ -88,14 +89,6 @@ def send_media_to_slack(message, slack_client, project, sender_name, telegram_us
     else:
         logging.error(f"Error downloading file from Telegram: status {file_response.status_code}, URL: {file_url}")
 
-# Slack Events API handler
-def process_slack_event(event):
-    if 'type' in event and event['type'] == 'message':
-        logging.debug(f"Handling a Slack event: event_type={event['type']}")
-        handle_slack_message(event)
-    else:
-        logging.debug(f"Skipping an irrelevant Slack event: {event['type']}")
-
 # Function for processing messages from Slack and forwarding them to Telegram
 def handle_slack_message(event):
     logging.debug(f"Received message from Slack: channel_id={event['channel']}")
@@ -138,11 +131,73 @@ def handle_slack_message(event):
     else:
         logging.warning(f"Project not found or not active for Slack channel_id={event['channel']}")
 
+def handle_slack_message_changed(event):
+    logging.debug(f"Handling edited message from Slack: channel_id={event['channel']}")
+    project = find_project_by_slack_channel(event['channel'])
+    
+    if project and project['active']:
+        slack_token = project['slack_bot_token']
+        slack_client = WebClient(token=slack_token)
+        slack_user_id = event['message'].get('user')
+        slack_username = get_slack_username(slack_client, slack_user_id)
+        slack_user_id_tag = f"<@{slack_user_id}>"
+        
+        # Найти оригинальное сообщение по ts
+        original_thread_ts = event['previous_message']['ts']
+        edited_text = event['message']['text']
+        
+        try:
+            # Обновление сообщения в Telegram
+            telegram_message_id = get_telegram_message_id_by_thread_ts(original_thread_ts, project['project_name'])
+            telegram_message_text = f"{slack_username} \n{slack_user_id_tag}\n\n{edited_text}"
+            telegram_bot.edit_message_text(
+                chat_id=project['telegram_chat_id'],
+                message_id=telegram_message_id,
+                text=telegram_message_text
+            )
+            logging.debug(f"Telegram message {telegram_message_id} updated for project {project['project_name']}")
+        except Exception as e:
+            logging.error(f"Error when editing Telegram message: {str(e)}")
+
+# Добавим в основной обработчик событий Slack обработку изменения сообщений
+def process_slack_event(event):
+    if event.get('subtype') == 'message_changed':
+        handle_slack_message_changed(event)
+    elif event.get('type') == 'message':
+        handle_slack_message(event)
+    else:
+        logging.debug(f"Skipping an irrelevant Slack event: {event['type']}")
+
 # Processing messages in Telegram (text, photos, documents, audio, video, animations, voice messages)
 @telegram_bot.message_handler(content_types=['text','photo', 'document', 'audio', 'video', 'animation', 'voice'])
 def handle_media_message(message):
     logging.debug(f"Processing a message from Telegram: chat_id={message.chat.id}, message_id={message.message_id}, type: {message.content_type}")
     handle_telegram_message(message)
+
+@telegram_bot.edited_message_handler(content_types=['text'])
+def handle_telegram_message_edit(message):
+    logging.debug(f"Handling edited message from Telegram: chat_id={message.chat.id}, message_id={message.message_id}, type: {message.content_type}")
+    
+    project = find_project_by_chat_id(message.chat.id)
+    
+    if project and project['active']:
+        try:
+            slack_token = project['slack_bot_token']
+            slack_client = WebClient(token=slack_token)
+            slack_ts = get_thread_ts_from_slack(message.message_id, project['project_name'])
+            
+            if slack_ts:
+                edited_text = message.text
+                slack_client.chat_update(
+                    channel=project['slack_channel_id'],
+                    ts=slack_ts,
+                    text=edited_text
+                )
+                logging.debug(f"Message updated in Slack for project {project['project_name']} with ts={slack_ts}")
+            else:
+                logging.warning(f"Slack thread_ts not found for Telegram message {message.message_id}")
+        except Exception as e:
+            logging.error(f"Error when editing Slack message: {str(e)}")
 
 def handle_telegram_message(message):
     logging.debug(f"Received message from Telegram: chat_id={message.chat.id}, content_type={message.content_type}, message_id={message.message_id}")

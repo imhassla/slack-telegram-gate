@@ -133,10 +133,12 @@ def load_config():
             current_config = new_config
             config_last_loaded_time = time.time()
             logging.debug("Configuration file updated.")
-            # Get and save slack_bot_member_id for each project
+            
+            # Get and save slack_bot_member_id for each active project
             for project in current_config['channels']:
-                slack_token = project['slack_bot_token']
-                project['slack_bot_member_id'] = get_slack_bot_member_id(slack_token)
+                if project.get('active', False):  # Check if 'active' is True
+                    slack_token = project['slack_bot_token']
+                    project['slack_bot_member_id'] = get_slack_bot_member_id(slack_token)
             
             return current_config
     except Exception as e:
