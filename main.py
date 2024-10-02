@@ -10,13 +10,14 @@ import logging
 import sqlite3
 import requests
 import signal
+import time
 import sys
 import os
 
 # Setting up logging
 logging.basicConfig(
     filename='integration.log', 
-    level=logging.DEBUG,
+    level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
@@ -142,12 +143,12 @@ def handle_slack_message_changed(event):
         slack_username = get_slack_username(slack_client, slack_user_id)
         slack_user_id_tag = f"<@{slack_user_id}>"
         
-        # Найти оригинальное сообщение по ts
+        # Find original message by ts
         original_thread_ts = event['previous_message']['ts']
         edited_text = event['message']['text']
         
         try:
-            # Обновление сообщения в Telegram
+            #Updating a message in Telegram
             telegram_message_id = get_telegram_message_id_by_thread_ts(original_thread_ts, project['project_name'])
             telegram_message_text = f"{slack_username} \n{slack_user_id_tag}\n\n{edited_text}"
             telegram_bot.edit_message_text(
@@ -159,7 +160,7 @@ def handle_slack_message_changed(event):
         except Exception as e:
             logging.error(f"Error when editing Telegram message: {str(e)}")
 
-# Добавим в основной обработчик событий Slack обработку изменения сообщений
+# Add message change processing to the main Slack event handler
 def process_slack_event(event):
     if event.get('subtype') == 'message_changed':
         handle_slack_message_changed(event)
@@ -255,16 +256,17 @@ def send_text_to_telegram(event, slack_username, slack_user_id_tag, project, rep
     logging.debug(f"Message sent to Telegram for the project {project['project_name']}, message_id={telegram_response.message_id}")
     return telegram_response
 
+
 # Telegram bot in a separate thread
 def run_telegram_bot():
-    try:
-        logging.debug("Launching a Telegram bot survey")
-        while not stop_event.is_set():
-            telegram_bot.polling(none_stop=True, timeout=5) 
-    except Exception as e:
-        logging.critical(f"Critical error in Telegram bot: {str(e)}")
-    finally:
-        logging.info("Telegram bot stopped.")
+    while True:
+        try:
+            logging.debug("Launching a Telegram bot survey")
+            while not stop_event.is_set():
+                telegram_bot.polling(none_stop=True, timeout=5) 
+        except Exception as e:
+            logging.critical(f"Critical error in Telegram bot: {str(e)}")
+            time.sleep(5)
 
 # Function to terminate the program correctly
 def signal_handler(sig, frame):
@@ -278,16 +280,19 @@ app = Flask(__name__)
 # Route to receive events from Slack
 @app.route('/slack/events', methods=['POST'])
 def slack_event_handler():
-    data = request.json
-    
-    # Process challenge from Slack (during initial setup)
-    if 'challenge' in data:
-        return jsonify({'challenge': data['challenge']})
-    
-    # Immediately return the Slack response
-    if 'event' in data:
-        event_data = data['event']
-        threading.Thread(target=process_slack_event, args=(event_data,)).start()
+    try:
+        data = request.json
+        
+        # Process challenge from Slack (during initial setup)
+        if 'challenge' in data:
+            return jsonify({'challenge': data['challenge']})
+        
+        # Immediately return the Slack response
+        if 'event' in data:
+            event_data = data['event']
+            threading.Thread(target=process_slack_event, args=(event_data,)).start()
+    except:
+        pass
 
     return '', 200  
 
